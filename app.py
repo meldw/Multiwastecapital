@@ -1,4 +1,4 @@
-#only for vlm show
+
 '''
 import streamlit as st
 from model_vlm import classify_image_from_file
@@ -47,7 +47,7 @@ for speaker, text in st.session_state.chat_history:
 #we try use html gabung 3 halaman
 
 import streamlit as st
-import streamlit.components.v1 as components
+from streamlit_extras.switch_page_button import switch_page
 
 st.set_page_config(page_title="Sampah Bercuan", layout="centered")
 
@@ -59,20 +59,20 @@ Aplikasi ini membantu kamu mengenali jenis sampah, berkonsultasi lewat chatbot, 
 
 st.markdown("### 🔍 Pilih fitur yang ingin kamu akses:")
 
-# Buat 3 tombol sebagai gateway ke 3 halaman
 col1, col2, col3 = st.columns(3)
 
 with col1:
     if st.button("🖼️ Deteksi Sampah + Chat"):
-        st.switch_page("pages/main_page.py")
+        switch_page("main_page")  # tanpa "pages/"
 
 with col2:
     if st.button("💰 Coin & Investasi"):
-        st.switch_page("pages/coin_page.py")
+        switch_page("coin_page")
 
 with col3:
     if st.button("📜 Riwayat Transaksi"):
-        st.switch_page("pages/history_page.py")
+        switch_page("history_page")
+
 
 
 
