@@ -1,12 +1,14 @@
-
 import streamlit as st
-import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Sampah Bercuan", layout="centered")
 
-# ===== Custom CSS untuk mempercantik tombol dan teks =====
+# ===== Custom CSS untuk background dan elemen lainnya =====
 st.markdown("""
 <style>
+    body {
+        background: linear-gradient(to bottom right, #e0f7e9, #ffffff);
+    }
+
     .main-title {
         font-size: 36px;
         font-weight: bold;
@@ -22,13 +24,6 @@ st.markdown("""
         margin-bottom: 30px;
     }
 
-    .button-container {
-        display: flex;
-        justify-content: center;
-        gap: 40px;
-        margin-top: 30px;
-    }
-
     .stButton > button {
         background-color: #2E8B57;
         color: white;
@@ -36,21 +31,29 @@ st.markdown("""
         border-radius: 8px;
         padding: 12px 20px;
         border: none;
+        transition: background-color 0.3s ease;
     }
 
     .stButton > button:hover {
         background-color: #276c48;
     }
+
+    /* Atur seluruh halaman */
+    .block-container {
+        background: linear-gradient(to bottom right, #e0f7e9, #ffffff);
+        padding: 2rem;
+        border-radius: 12px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# ===== Title and Description =====
+# ===== Title dan Deskripsi =====
 st.markdown('<div class="main-title">👋 Selamat Datang di Sampah Bercuan!</div>', unsafe_allow_html=True)
 st.markdown('<div class="description">Aplikasi ini membantu kamu mengenali jenis sampah, berkonsultasi lewat chatbot, dan memantau coin serta histori transaksi.</div>', unsafe_allow_html=True)
 
 st.markdown("### 🔍 Pilih fitur yang ingin kamu akses:")
 
-# ===== Tiga Kolom Tombol =====
+# ===== Tombol Navigasi =====
 col1, col2, col3 = st.columns(3)
 
 with col1:
