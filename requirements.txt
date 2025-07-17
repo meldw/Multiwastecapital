@@ -1,0 +1,9 @@
+transformers
+torch
+Pillow
+requests
+python-dotenv
+streamlit
+huggingface-hub
+python-dotenv
+
