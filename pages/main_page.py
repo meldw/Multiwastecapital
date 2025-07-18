@@ -12,7 +12,7 @@ st.set_page_config(page_title="EcoSort UI", layout="wide")
 st.title("🌱 EcoSort Interface")
 
 # Render halaman HTML UI (pastikan file ecosort_ui.html ada di public/)
-with open("public/ecosort_ui.html", "r", encoding="utf-8") as f:
+with open("public/cwastemel_ui.html", "r", encoding="utf-8") as f:
     html_code = f.read()
 
 components.html(html_code, height=1300, scrolling=True)
