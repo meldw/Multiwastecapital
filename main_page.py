@@ -4,8 +4,8 @@ import os
 import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from model_vlm import classify_image_from_file
-from model_llm import get_bot_reply
+from modul.model_vlm import classify_image_from_file
+from modul.model_llm import get_bot_reply
 
 st.set_page_config(page_title="EcoSort UI", layout="wide")
 st.title("🌱 EcoSort Interface")
