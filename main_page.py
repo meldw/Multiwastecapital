@@ -29,7 +29,7 @@ def render_page(page):
     elif page == 'history':
         # st.write("Welcome to the History Page!")
         print("ini abaikan")
-        with open("public/history_page.html", "r", encoding="utf-8") as f:
+        with open("public/history.html", "r", encoding="utf-8") as f:
             html_code = f.read()
         components.html(html_code, height=1300, scrolling=True)
 
