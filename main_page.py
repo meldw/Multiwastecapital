@@ -17,15 +17,12 @@ if 'page' not in st.session_state:
 def render_page(page):
     if page == 'home':
         st.write("Welcome to the Home Page!")
-        # You can include other content for Home here.
     elif page == 'coins':
         st.write("Welcome to the Coins Page!")
-        # You can include other content for Coins here.
     elif page == 'history':
         st.write("Welcome to the History Page!")
-        # You can include other content for History here.
 
-# Display the HTML navigation bar (with the modified button elements)
+# Add New
 with open("public/cwastemel_ui.html", "r", encoding="utf-8") as f:
     html_code = f.read()
 
