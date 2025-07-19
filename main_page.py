@@ -28,18 +28,29 @@ with open("public/cwastemel_ui.html", "r", encoding="utf-8") as f:
 
 components.html(html_code, height=1300, scrolling=True)
 
-# Add New
-col1, col2, col3 = st.columns(3)
+# Handle the pages click
+message = st.experimental_get_query_params()
 
-with col1:
-    if st.button('Home'):
-        st.session_state.page = 'home'
-with col2:
-    if st.button('Coins'):
-        st.session_state.page = 'coins'
-with col3:
-    if st.button('History'):
-        st.session_state.page = 'history'
+# Check Params
+if "page" in message:
+    st.session_state.page = message["page"][0]
+    st.experimental_rerun()
 
-# Add New
+# Render item pages
 render_page(st.session_state.page)
+
+# # Add New
+# col1, col2, col3 = st.columns(3)
+
+# with col1:
+#     if st.button('Home'):
+#         st.session_state.page = 'home'
+# with col2:
+#     if st.button('Coins'):
+#         st.session_state.page = 'coins'
+# with col3:
+#     if st.button('History'):
+#         st.session_state.page = 'history'
+
+# # Add New
+# render_page(st.session_state.page)
