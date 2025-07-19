@@ -33,12 +33,6 @@ def render_page(page):
             html_code = f.read()
         components.html(html_code, height=1300, scrolling=True)
 
-# Add New
-# with open("public/cwastemel_ui.html", "r", encoding="utf-8") as f:
-#     html_code = f.read()
-
-# components.html(html_code, height=1300, scrolling=True)
-
 def page_navigation_handler(msg):
     if msg['type'] == 'set_page':
         st.session_state.page = msg['page']
@@ -59,30 +53,4 @@ elif page_selection == "History":
 
 # Render content based on the selected page
 render_page(st.session_state.page)
-
-# Handle the pages click
-# message = st.query_params ()
-
-# Check Params
-# if "page" in message:
-#     st.session_state.page = message["page"][0]
-#     st.experimental_rerun()
-
-# Render item pages
-# render_page(st.session_state.page)
-
-# # Add New
-# col1, col2, col3 = st.columns(3)
-
-# with col1:
-#     if st.button('Home'):
-#         st.session_state.page = 'home'
-# with col2:
-#     if st.button('Coins'):
-#         st.session_state.page = 'coins'
-# with col3:
-#     if st.button('History'):
-#         st.session_state.page = 'history'
-
-# # Add New
 # render_page(st.session_state.page)
