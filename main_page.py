@@ -28,16 +28,22 @@ with open("public/cwastemel_ui.html", "r", encoding="utf-8") as f:
 
 components.html(html_code, height=1300, scrolling=True)
 
+def page_navigation_handler(msg):
+    if msg['type'] == 'set_page':
+        st.session_state.page = msg['page']
+
+render_page(st.session_state.page)
+
 # Handle the pages click
-message = st.query_params ()
+# message = st.query_params ()
 
 # Check Params
-if "page" in message:
-    st.session_state.page = message["page"][0]
-    st.experimental_rerun()
+# if "page" in message:
+#     st.session_state.page = message["page"][0]
+#     st.experimental_rerun()
 
 # Render item pages
-render_page(st.session_state.page)
+# render_page(st.session_state.page)
 
 # # Add New
 # col1, col2, col3 = st.columns(3)
