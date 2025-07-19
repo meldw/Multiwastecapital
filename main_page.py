@@ -34,14 +34,20 @@ col1, col2, col3 = st.columns(3)
 with col1:
     if st.button('Home'):
         st.session_state.page = 'home'
+        st.experimental_rerun()  # Trigger a rerun
+        st.write("Home button clicked")  # Debugging message
 
 with col2:
     if st.button('Coins'):
         st.session_state.page = 'coins'
+        st.experimental_rerun()  # Trigger a rerun
+        st.write("Coins button clicked")  # Debugging message
 
 with col3:
     if st.button('History'):
         st.session_state.page = 'history'
+        st.experimental_rerun()  # Trigger a rerun
+        st.write("History button clicked")  # Debugging message
 
 # Add New
 render_page(st.session_state.page)
