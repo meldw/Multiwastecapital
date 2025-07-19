@@ -3,7 +3,6 @@ import streamlit.components.v1 as components
 import os
 import sys
 
-# Biar bisa import model dari root
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from model_vlm import classify_image_from_file
 from model_llm import get_bot_reply
@@ -11,11 +10,10 @@ from model_llm import get_bot_reply
 st.set_page_config(page_title="EcoSort UI", layout="wide")
 st.title("🌱 EcoSort Interface")
 
-# Initialize session state if not already set
 if 'page' not in st.session_state:
     st.session_state.page = 'home'
 
-# Define a function to display content based on the selected page
+# Add New
 def render_page(page):
     if page == 'home':
         st.write("Welcome to the Home Page!")
@@ -33,7 +31,7 @@ with open("public/cwastemel_ui.html", "r", encoding="utf-8") as f:
 
 components.html(html_code, height=1300, scrolling=True)
 
-# Add buttons for navigation in Streamlit (they control which page is displayed)
+# Add New
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -48,5 +46,5 @@ with col3:
     if st.button('History'):
         st.session_state.page = 'history'
 
-# Render content based on the selected page
+# Add New
 render_page(st.session_state.page)
