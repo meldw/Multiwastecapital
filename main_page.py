@@ -29,7 +29,7 @@ with open("public/cwastemel_ui.html", "r", encoding="utf-8") as f:
 components.html(html_code, height=1300, scrolling=True)
 
 # Handle the pages click
-message = st.experimental_get_query_params()
+message = st.query_params ()
 
 # Check Params
 if "page" in message:
