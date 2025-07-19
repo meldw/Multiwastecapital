@@ -32,6 +32,24 @@ def page_navigation_handler(msg):
     if msg['type'] == 'set_page':
         st.session_state.page = msg['page']
 
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if st.button('Home'):
+        st.session_state.page = 'home'
+        st.experimental_rerun()  # Trigger a rerun to reflect changes immediately
+
+with col2:
+    if st.button('Coins'):
+        st.session_state.page = 'coins'
+        st.experimental_rerun()  # Trigger a rerun to reflect changes immediately
+
+with col3:
+    if st.button('History'):
+        st.session_state.page = 'history'
+        st.experimental_rerun()  # Trigger a rerun to reflect changes immediately
+
+# Render content based on the selected page
 render_page(st.session_state.page)
 
 # Handle the pages click
