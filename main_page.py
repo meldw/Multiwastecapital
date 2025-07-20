@@ -31,7 +31,7 @@ def render_page(page):
                 f.write(uploaded_file.getbuffer())
 
             # Tampilkan preview gambar
-            st.image("temp.jpg", caption="Gambar yang di-upload", use_column_width=True)
+            st.image("temp.jpg", caption="Gambar yang di-upload", use_container_width=True)
 
             # Klasifikasi dengan model VLM
             hasil_klasifikasi = classify_image_from_file("temp.jpg")
