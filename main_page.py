@@ -1,8 +1,12 @@
-from modul.model_vlm import classify_image_from_file
 import streamlit as st
 import streamlit.components.v1 as components
 import os
 import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '')))
+
+from modul.model_vlm import classify_image_from_file
+from modul.model_llm import get_bot_reply
 
 st.set_page_config(page_title="EcoSort UI", layout="wide")
 st.title("🌱 EcoSort Interface")
