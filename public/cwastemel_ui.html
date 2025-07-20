@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sampah Bercuan</title>
+    <title>EcoSort - Waste Classification System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,477 +11,370 @@
             height: 400px;
             transition: all 0.3s ease;
         }
-        .chat-container.collapsed {
-            height: 60px;
-        }
-        .chat-messages {
-            height: calc(100% - 60px);
-        }
-        .result-card {
-            transition: all 0.3s ease;
-        }
-        .result-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        #previewImage {
+        .preview-image {
             max-height: 300px;
             object-fit: contain;
         }
-        .upload-area {
-            border: 2px dashed #cbd5e0;
-            transition: all 0.3s ease;
+        .classification-result {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
         }
-        .upload-area:hover {
-            border-color: #4ade80;
-            background-color: #f0fdf4;
+        .classification-result.show {
+            opacity: 1;
+            transform: translateY(0);
         }
-        .upload-area.dragover {
-            border-color: #4ade80;
-            background-color: #f0fdf4;
-            transform: scale(1.02);
+        .typing-indicator::after {
+            content: '...';
+            animation: typing 1.5s infinite;
+        }
+        @keyframes typing {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
         }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <!-- Navigation Bar -->
-    <nav class="bg-green-600 text-white shadow-lg">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <i class="fas fa-recycle text-2xl"></i>
-                <span class="text-xl font-bold">EcoSort</span>
-            </div>
-            <div class="flex space-x-4">
-                <!-- Home Button -->
-                <button onclick="setPage('home')" id="homeBtn" class="px-3 py-2 rounded-lg bg-green-700 hover:bg-green-800 transition flex items-center space-x-1">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </button>
-                <!-- Coins Button -->
-                <button onclick="setPage('coins')" href="coin.html" id="coinBtn" class="px-3 py-2 rounded-lg hover:bg-green-700 transition flex items-center space-x-1">
-                    <i class="fas fa-coins"></i>
-                    <span>Coins</span>
-                </button>
-                <!-- History Button -->
-                <button onclick="setPage('history')" href="history.html" id="historyBtn" class="px-3 py-2 rounded-lg hover:bg-green-700 transition flex items-center space-x-1">
-                    <i class="fas fa-history"></i>
-                    <span>History</span>
-                </button>
+    <!-- Header -->
+    <header class="bg-green-700 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-recycle text-3xl text-green-500"></i>
+                    <h1 class="text-2xl font-bold">EcoSort</h1>
+                </div>
+                <nav>
+                    <ul class="flex space-x-6">
+                        <li><a href="main_page.py" class="hover:text-green-200 transition">Home</a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
-    </nav>
-
+    </header>
 
     <!-- Main Content -->
     <main class="container mx-auto px-4 py-8">
-        <!-- Home Section -->
-        <section id="homeSection">
-            <div class="text-center mb-12">
-                <h1 class="text-4xl font-bold text-green-700 mb-2">Smart Waste Classification</h1>
-                <p class="text-gray-600 max-w-2xl mx-auto">Upload an image of waste and our AI will classify it for proper recycling. Earn coins for each correct classification!</p>
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Smart Waste Classification System</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto">Upload an image of waste and our AI will classify it for proper disposal. You can also chat with our waste expert bot for more information.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Image Upload Section -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center mb-6">
+                    <i class="fas fa-camera text-green-600 text-2xl mr-3"></i>
+                    <h3 class="text-xl font-semibold text-gray-800">Upload Waste Image</h3>
+                </div>
+                
+                <div id="upload-container" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-green-500 transition duration-300 mb-6">
+                    <input type="file" id="image-upload" accept="image/*" class="hidden">
+                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                    <p class="text-gray-500 mb-2">Drag & drop your waste image here</p>
+                    <p class="text-sm text-gray-400">or click to browse files (JPEG, PNG)</p>
+                </div>
+                
+                <div id="image-preview-container" class="hidden mb-6">
+                    <div class="relative">
+                        <img id="image-preview" src="#" alt="Preview" class="preview-image w-full rounded-lg">
+                        <button id="remove-image" class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <button id="classify-btn" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Classify Waste
+                </button>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Upload and Results Section -->
-                <div class="bg-white rounded-xl shadow-md p-6">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Upload Waste Image</h2>
-                    
-                    <!-- Upload Area -->
-                    <div id="uploadArea" class="upload-area rounded-lg p-8 text-center cursor-pointer mb-6">
-                        <input type="file" id="imageUpload" accept="image/*" class="hidden">
-                        <div class="flex flex-col items-center justify-center space-y-3">
-                            <i class="fas fa-cloud-upload-alt text-4xl text-green-500"></i>
-                            <p class="text-gray-600">Drag & drop your image here or click to browse</p>
-                            <p class="text-sm text-gray-400">Supports: JPG, PNG, WEBP (Max 5MB)</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Image Preview -->
-                    <div id="imagePreviewContainer" class="hidden mb-6">
-                        <div class="relative">
-                            <img id="previewImage" class="w-full rounded-lg mx-auto" src="" alt="Preview">
-                            <button id="removeImageBtn" class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Classify Button -->
-                    <button id="classifyBtn" class="w-full py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                        <i class="fas fa-search mr-2"></i> Classify Waste
-                    </button>
-                    
-                    <!-- Results -->
-                    <div id="resultsContainer" class="hidden mt-8">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Classification Results</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Primary Result -->
-                            <div class="result-card bg-green-50 border border-green-200 rounded-lg p-4">
-                                <div class="flex items-center space-x-3 mb-2">
-                                    <div class="bg-green-100 p-2 rounded-full">
-                                        <i class="fas fa-check-circle text-green-600"></i>
-                                    </div>
-                                    <span class="font-medium text-green-800">Most Likely</span>
-                                </div>
-                                <h4 id="primaryCategory" class="text-lg font-bold text-gray-800">Organic Waste</h4>
-                                <p id="primaryConfidence" class="text-green-600 font-medium">98% confidence</p>
-                                <p id="primaryDescription" class="text-gray-600 mt-2 text-sm">This can be composted to create nutrient-rich soil.</p>
+            <!-- Chatbot Section -->
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center mb-6">
+                    <i class="fas fa-robot text-green-600 text-2xl mr-3"></i>
+                    <h3 class="text-xl font-semibold text-gray-800">Waste Expert Chat</h3>
+                </div>
+                
+                <div class="chat-container bg-gray-100 rounded-lg p-4 mb-4 overflow-y-auto">
+                    <div id="chat-messages" class="space-y-3">
+                        <div class="flex">
+                            <div class="bg-green-100 rounded-lg p-3 max-w-xs lg:max-w-md">
+                                <p class="text-gray-800">Hello! I'm EcoBot, your waste classification assistant. You can ask me anything about waste types, recycling, or upload an image for classification.</p>
                             </div>
-                            
-                            <!-- Secondary Result -->
-                            <div class="result-card bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                <div class="flex items-center space-x-3 mb-2">
-                                    <div class="bg-blue-100 p-2 rounded-full">
-                                        <i class="fas fa-info-circle text-blue-600"></i>
-                                    </div>
-                                    <span class="font-medium text-blue-800">Alternative</span>
-                                </div>
-                                <h4 id="secondaryCategory" class="text-lg font-bold text-gray-800">Recyclable</h4>
-                                <p id="secondaryConfidence" class="text-blue-600 font-medium">45% confidence</p>
-                                <p id="secondaryDescription" class="text-gray-600 mt-2 text-sm">If clean, this might be recyclable in some facilities.</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Disposal Instructions -->
-                        <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                            <div class="flex items-center space-x-3 mb-2">
-                                <div class="bg-yellow-100 p-2 rounded-full">
-                                    <i class="fas fa-trash-alt text-yellow-600"></i>
-                                </div>
-                                <span class="font-medium text-yellow-800">Disposal Instructions</span>
-                            </div>
-                            <p id="disposalInstructions" class="text-gray-700">Place in the green bin for organic waste. Make sure to remove any non-organic contaminants.</p>
-                        </div>
-                        
-                        <!-- Environmental Impact -->
-                        <div class="mt-6 bg-purple-50 border border-purple-200 rounded-lg p-4">
-                            <div class="flex items-center space-x-3 mb-2">
-                                <div class="bg-purple-100 p-2 rounded-full">
-                                    <i class="fas fa-leaf text-purple-600"></i>
-                                </div>
-                                <span class="font-medium text-purple-800">Environmental Impact</span>
-                            </div>
-                            <p id="environmentalImpact" class="text-gray-700">Properly composting this waste can reduce methane emissions from landfills by up to 60%.</p>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Chatbot Section -->
-                <div class="bg-white rounded-xl shadow-md overflow-hidden">
-                    <div class="chat-container" id="chatContainer">
-                        <!-- Chat Header -->
-                        <div class="bg-green-600 text-white px-4 py-3 flex justify-between items-center cursor-pointer" id="chatHeader">
-                            <div class="flex items-center space-x-3">
-                                <i class="fas fa-robot"></i>
-                                <span class="font-medium">EcoBot Assistant</span>
-                            </div>
-                            <i class="fas fa-chevron-down" id="chatToggleIcon"></i>
-                        </div>
-                        
-                        <!-- Chat Messages -->
-                        <div class="chat-messages overflow-y-auto p-4 bg-gray-50" id="chatMessages">
-                            <!-- Bot greeting message -->
-                            <div class="flex mb-4">
-                                <div class="flex-shrink-0 mr-3">
-                                    <div class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center">
-                                        <i class="fas fa-robot"></i>
-                                    </div>
-                                </div>
-                                <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs md:max-w-md">
-                                    <p>Hello! I'm EcoBot, your waste classification assistant. How can I help you today?</p>
-                                    <p class="text-xs text-gray-500 mt-1">Just now</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Sample user message -->
-                            <div class="flex justify-end mb-4">
-                                <div class="bg-blue-100 text-blue-800 p-3 rounded-lg shadow-sm max-w-xs md:max-w-md">
-                                    <p>How should I dispose of plastic bottles?</p>
-                                    <p class="text-xs text-gray-500 mt-1 text-right">Just now</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Sample bot response -->
-                            <div class="flex mb-4">
-                                <div class="flex-shrink-0 mr-3">
-                                    <div class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center">
-                                        <i class="fas fa-robot"></i>
-                                    </div>
-                                </div>
-                                <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs md:max-w-md">
-                                    <p>Plastic bottles should be rinsed and placed in the recycling bin. If they have caps, check if your local facility accepts them with caps on.</p>
-                                    <p class="text-xs text-gray-500 mt-1">Just now</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Chat Input -->
-                        <div class="border-t border-gray-200 p-4 bg-white">
-                            <div class="flex space-x-2">
-                                <input type="text" id="chatInput" placeholder="Ask me about waste..." class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                                <button id="sendChatBtn" class="bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 transition">
-                                    <i class="fas fa-paper-plane"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="flex">
+                    <input type="text" id="chat-input" placeholder="Ask about waste..." class="flex-1 border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <button id="send-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-r-lg transition duration-300">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
                 </div>
             </div>
-        </section>
-        
- <script>
-        // DOM Elements
-        const homeBtn = document.getElementById('homeBtn');
-        const coinBtn = document.getElementById('coinBtn');
-        const historyBtn = document.getElementById('historyBtn');
-        const homeSection = document.getElementById('homeSection');
-        const coinSection = document.getElementById('coinSection');
-        const historySection = document.getElementById('historySection');
-        const backFromCoinsBtn = document.getElementById('backFromCoinsBtn');
-        const backFromHistoryBtn = document.getElementById('backFromHistoryBtn');
-        
-        const uploadArea = document.getElementById('uploadArea');
-        const imageUpload = document.getElementById('imageUpload');
-        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
-        const previewImage = document.getElementById('previewImage');
-        const removeImageBtn = document.getElementById('removeImageBtn');
-        const classifyBtn = document.getElementById('classifyBtn');
-        const resultsContainer = document.getElementById('resultsContainer');
-        
-        const chatContainer = document.getElementById('chatContainer');
-        const chatHeader = document.getElementById('chatHeader');
-        const chatToggleIcon = document.getElementById('chatToggleIcon');
-        const chatMessages = document.getElementById('chatMessages');
-        const chatInput = document.getElementById('chatInput');
-        const sendChatBtn = document.getElementById('sendChatBtn');
-        
-        // Navigation
-        homeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            homeSection.classList.remove('hidden');
-            coinSection.classList.add('hidden');
-            historySection.classList.add('hidden');
-        });
-        
-        coinBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            homeSection.classList.add('hidden');
-            coinSection.classList.remove('hidden');
-            historySection.classList.add('hidden');
-        });
-        
-        historyBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            homeSection.classList.add('hidden');
-            coinSection.classList.add('hidden');
-            historySection.classList.remove('hidden');
-        });
-        
-        backFromCoinsBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            homeSection.classList.remove('hidden');
-            coinSection.classList.add('hidden');
-        });
-        
-        backFromHistoryBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            homeSection.classList.remove('hidden');
-            historySection.classList.add('hidden');
-        });
-        
-        // Image Upload Functionality
-        uploadArea.addEventListener('click', () => {
-            imageUpload.click();
-        });
-        
-        imageUpload.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                const file = e.target.files[0];
-                const reader = new FileReader();
-                
-                reader.onload = (event) => {
-                    previewImage.src = event.target.result;
-                    imagePreviewContainer.classList.remove('hidden');
-                    classifyBtn.disabled = false;
-                };
-                
-                reader.readAsDataURL(file);
-            }
-        });
-        
-        removeImageBtn.addEventListener('click', () => {
-            previewImage.src = '';
-            imagePreviewContainer.classList.add('hidden');
-            imageUpload.value = '';
-            classifyBtn.disabled = true;
-            resultsContainer.classList.add('hidden');
-        });
-        
-        // Drag and Drop
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, preventDefaults, false);
-        });
-        
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        
-        ['dragenter', 'dragover'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, highlight, false);
-        });
-        
-        ['dragleave', 'drop'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, unhighlight, false);
-        });
-        
-        function highlight() {
-            uploadArea.classList.add('dragover');
-        }
-        
-        function unhighlight() {
-            uploadArea.classList.remove('dragover');
-        }
-        
-        uploadArea.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            const files = dt.files;
+        </div>
+
+        <!-- Classification Result Section (Hidden by default) -->
+        <div id="classification-result" class="classification-result mt-12 bg-white rounded-xl shadow-md p-6 max-w-4xl mx-auto">
+            <div class="flex items-center mb-6">
+                <i class="fas fa-vial text-green-600 text-2xl mr-3"></i>
+                <h3 class="text-xl font-semibold text-gray-800">Classification Result</h3>
+            </div>
             
-            if (files.length > 0) {
-                const file = files[0];
-                const reader = new FileReader();
-                
-                reader.onload = (event) => {
-                    previewImage.src = event.target.result;
-                    imagePreviewContainer.classList.remove('hidden');
-                    classifyBtn.disabled = false;
-                };
-                
-                reader.readAsDataURL(file);
-            }
-        });
-        
-        // Classify Button (Simulate classification)
-        classifyBtn.addEventListener('click', () => {
-            // Simulate API call delay
-            classifyBtn.disabled = true;
-            classifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Classifying...';
-            
-            setTimeout(() => {
-                // Sample results - replace with your actual API response
-                const sampleResults = {
-                    primary: {
-                        category: "Plastic",
-                        confidence: "92",
-                        description: "This is a recyclable plastic item. Check for recycling symbols to determine the specific type.",
-                        disposal: "Rinse if necessary and place in the recycling bin. Check local guidelines for specific plastic types.",
-                        impact: "Recycling plastic saves energy and reduces the need for new plastic production, which helps conserve resources and reduce pollution."
-                    },
-                    secondary: {
-                        category: "Metal",
-                        confidence: "35",
-                        description: "There might be some metal components in this item.",
-                        disposal: "If separable, metal parts should go in metal recycling.",
-                        impact: "Recycling metal uses significantly less energy than producing new metal from raw materials."
-                    }
-                };
-                
-                // Update UI with results
-                document.getElementById('primaryCategory').textContent = sampleResults.primary.category;
-                document.getElementById('primaryConfidence').textContent = `${sampleResults.primary.confidence}% confidence`;
-                document.getElementById('primaryDescription').textContent = sampleResults.primary.description;
-                document.getElementById('disposalInstructions').textContent = sampleResults.primary.disposal;
-                document.getElementById('environmentalImpact').textContent = sampleResults.primary.impact;
-                
-                document.getElementById('secondaryCategory').textContent = sampleResults.secondary.category;
-                document.getElementById('secondaryConfidence').textContent = `${sampleResults.secondary.confidence}% confidence`;
-                document.getElementById('secondaryDescription').textContent = sampleResults.secondary.description;
-                
-                resultsContainer.classList.remove('hidden');
-                
-                // Reset button
-                classifyBtn.disabled = false;
-                classifyBtn.innerHTML = '<i class="fas fa-search mr-2"></i> Classify Waste';
-                
-                // Scroll to results
-                resultsContainer.scrollIntoView({ behavior: 'smooth' });
-                
-            }, 2000);
-        });
-        
-        // Chatbot Functionality
-        let isChatCollapsed = false;
-        
-        chatHeader.addEventListener('click', () => {
-            isChatCollapsed = !isChatCollapsed;
-            
-            if (isChatCollapsed) {
-                chatContainer.classList.add('collapsed');
-                chatToggleIcon.classList.remove('fa-chevron-down');
-                chatToggleIcon.classList.add('fa-chevron-up');
-            } else {
-                chatContainer.classList.remove('collapsed');
-                chatToggleIcon.classList.remove('fa-chevron-up');
-                chatToggleIcon.classList.add('fa-chevron-down');
-            }
-        });
-        
-        function addMessage(content, isUser = false) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `flex ${isUser ? 'justify-end' : ''} mb-4`;
-            
-            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            if (!isUser) {
-                messageDiv.innerHTML = `
-                    <div class="flex-shrink-0 mr-3">
-                        <div class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center">
-                            <i class="fas fa-robot"></i>
-                        </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <div id="waste-type-icon" class="text-3xl mr-3 text-green-600"></div>
+                        <h4 class="font-medium text-gray-800">Type</h4>
                     </div>
-                    <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs md:max-w-md">
-                        <p>${content}</p>
-                        <p class="text-xs text-gray-500 mt-1">${timestamp}</p>
-                    </div>
-                `;
-            } else {
-                messageDiv.innerHTML = `
-                    <div class="bg-blue-100 text-blue-800 p-3 rounded-lg shadow-sm max-w-xs md:max-w-md">
-                        <p>${content}</p>
-                        <p class="text-xs text-gray-500 mt-1 text-right">${timestamp}</p>
-                    </div>
-                `;
-            }
-            
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-        
-        sendChatBtn.addEventListener('click', () => {
-            const message = chatInput.value.trim();
-            if (message) {
-                addMessage(message, true);
-                chatInput.value = '';
+                    <p id="waste-type" class="text-lg font-semibold text-gray-900">-</p>
+                </div>
                 
-                // Simulate bot response
-                setTimeout(() => {
-                    const responses = [
-                        "That's a great question about waste management!",
-                        "I can help with that. Here's what you need to know...",
-                        "Based on our guidelines, here's the proper way to handle that...",
-                        "Interesting question! Here's some information that might help..."
-                    ];
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-percentage text-3xl mr-3 text-green-600"></i>
+                        <h4 class="font-medium text-gray-800">Confidence</h4>
+                    </div>
+                    <p id="confidence-level" class="text-lg font-semibold text-gray-900">-</p>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-trash-alt text-3xl mr-3 text-green-600"></i>
+                        <h4 class="font-medium text-gray-800">Disposal Method</h4>
+                    </div>
+                    <p id="disposal-method" class="text-lg font-semibold text-gray-900">-</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 bg-blue-50 p-4 rounded-lg">
+                <h4 class="font-medium text-blue-800 mb-2">Additional Information</h4>
+                <p id="additional-info" class="text-gray-700">-</p>
+            </div>
+            
+            <div class="mt-6 flex justify-end">
+                <button id="close-result" class="text-green-600 hover:text-green-800 font-medium transition">
+                    <i class="fas fa-times mr-1"></i> Close
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const uploadContainer = document.getElementById('upload-container');
+            const imageUpload = document.getElementById('image-upload');
+            const imagePreviewContainer = document.getElementById('image-preview-container');
+            const imagePreview = document.getElementById('image-preview');
+            const removeImageBtn = document.getElementById('remove-image');
+            const classifyBtn = document.getElementById('classify-btn');
+            const classificationResult = document.getElementById('classification-result');
+            const closeResultBtn = document.getElementById('close-result');
+            
+            const chatMessages = document.getElementById('chat-messages');
+            const chatInput = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('send-btn');
+            
+            // Waste type icons mapping
+            const wasteIcons = {
+                'organic': 'fas fa-leaf',
+                'recyclable': 'fas fa-recycle',
+                'hazardous': 'fas fa-biohazard',
+                'other': 'fas fa-trash'
+            };
+            
+            // Sample waste classification data
+            const wasteData = {
+                'organic': {
+                    name: 'Organic Waste',
+                    disposal: 'Compost or organic waste bin',
+                    info: 'This waste can decompose naturally and is great for composting. Includes food scraps, yard waste, and other biodegradable materials.'
+                },
+                'recyclable': {
+                    name: 'Recyclable Waste',
+                    disposal: 'Recycling bin',
+                    info: 'This material can be processed and reused. Make sure to clean containers before recycling. Includes paper, cardboard, glass, and certain plastics.'
+                },
+                'hazardous': {
+                    name: 'Hazardous Waste',
+                    disposal: 'Special disposal facility',
+                    info: 'This waste requires special handling as it can be dangerous to people or the environment. Includes batteries, chemicals, electronics, and medical waste.'
+                },
+                'other': {
+                    name: 'General Waste',
+                    disposal: 'Regular trash bin',
+                    info: 'This waste cannot be recycled or composted and should go to landfill. Includes non-recyclable plastics, contaminated materials, and other non-hazardous items.'
+                }
+            };
+            
+            // Event Listeners
+            uploadContainer.addEventListener('click', () => imageUpload.click());
+            
+            imageUpload.addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
                     
-                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                    addMessage(randomResponse);
-                }, 1000);
+                    reader.onload = function(event) {
+                        imagePreview.src = event.target.result;
+                        imagePreviewContainer.classList.remove('hidden');
+                        classifyBtn.disabled = false;
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Drag and drop functionality
+            uploadContainer.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadContainer.classList.add('border-emerald-500', 'bg-emerald-50');
+            });
+            
+            uploadContainer.addEventListener('dragleave', () => {
+                uploadContainer.classList.remove('border-emerald-500', 'bg-emerald-50');
+            });
+            
+            uploadContainer.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadContainer.classList.remove('border-emerald-500', 'bg-emerald-50');
+                
+                if (e.dataTransfer.files.length > 0) {
+                    imageUpload.files = e.dataTransfer.files;
+                    const event = new Event('change');
+                    imageUpload.dispatchEvent(event);
+                }
+            });
+            
+            removeImageBtn.addEventListener('click', function() {
+                imagePreview.src = '#';
+                imagePreviewContainer.classList.add('hidden');
+                imageUpload.value = '';
+                classifyBtn.disabled = true;
+            });
+            
+            classifyBtn.addEventListener('click', function() {
+                // Show loading state
+                classifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Classifying...';
+                classifyBtn.disabled = true;
+                
+                // Simulate API call with timeout
+                setTimeout(function() {
+                    // Random classification for demo purposes
+                    const wasteTypes = ['organic', 'recyclable', 'hazardous', 'other'];
+                    const randomType = wasteTypes[Math.floor(Math.random() * wasteTypes.length)];
+                    const confidence = (Math.random() * 50 + 50).toFixed(1) + '%';
+                    
+                    // Update classification result
+                    document.getElementById('waste-type-icon').className = wasteIcons[randomType] + ' text-3xl mr-3';
+                    document.getElementById('waste-type').textContent = wasteData[randomType].name;
+                    document.getElementById('confidence-level').textContent = confidence;
+                    document.getElementById('disposal-method').textContent = wasteData[randomType].disposal;
+                    document.getElementById('additional-info').textContent = wasteData[randomType].info;
+                    
+                    // Show result
+                    classificationResult.classList.add('show');
+                    
+                    // Reset button
+                    classifyBtn.innerHTML = 'Classify Waste';
+                    classifyBtn.disabled = false;
+                    
+                    // Add classification to chat
+                    addBotMessage(`I've classified your image as ${wasteData[randomType].name} with ${confidence} confidence. How can I help you with this waste type?`);
+                }, 2000);
+            });
+            
+            closeResultBtn.addEventListener('click', function() {
+                classificationResult.classList.remove('show');
+            });
+            
+            // Chat functionality
+            sendBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            function sendMessage() {
+                const message = chatInput.value.trim();
+                if (message) {
+                    addUserMessage(message);
+                    chatInput.value = '';
+                    
+                    // Show typing indicator
+                    const typingIndicator = document.createElement('div');
+                    typingIndicator.className = 'flex justify-start';
+                    typingIndicator.innerHTML = `
+                        <div class="bg-gray-200 rounded-lg p-3 max-w-xs">
+                            <p class="typing-indicator text-gray-500">EcoBot is typing</p>
+                        </div>
+                    `;
+                    chatMessages.appendChild(typingIndicator);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    // Simulate bot response after delay
+                    setTimeout(function() {
+                        // Remove typing indicator
+                        chatMessages.removeChild(typingIndicator);
+                        
+                        // Generate response
+                        const response = generateBotResponse(message);
+                        addBotMessage(response);
+                    }, 1500);
+                }
             }
-        });
-        
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendChatBtn.click();
+            
+            function addUserMessage(message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'flex justify-end';
+                messageDiv.innerHTML = `
+                    <div class="bg-green-600 text-white rounded-lg p-3 max-w-xs lg:max-w-md">
+                        <p>${message}</p>
+                    </div>
+                `;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            function addBotMessage(message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'flex';
+                messageDiv.innerHTML = `
+                    <div class="bg-emerald-100 rounded-lg p-3 max-w-xs lg:max-w-md">
+                        <p class="text-gray-800">${message}</p>
+                    </div>
+                `;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            function generateBotResponse(message) {
+                const lowerMessage = message.toLowerCase();
+                
+                if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
+                    return "Hello! How can I help you with waste classification today?";
+                } else if (lowerMessage.includes('organic') || lowerMessage.includes('compost')) {
+                    return "Organic waste includes food scraps, yard trimmings, and other biodegradable materials. You should dispose of it in a compost bin or organic waste container. It breaks down naturally and can be used to enrich soil.";
+                } else if (lowerMessage.includes('recycl') || lowerMessage.includes('plastic') || lowerMessage.includes('paper')) {
+                    return "Recyclable materials include paper, cardboard, glass, and certain plastics (look for recycling symbols  ♻️). Make sure items are clean before recycling. Check your local recycling guidelines as rules vary by location.";
+                } else if (lowerMessage.includes('hazard') || lowerMessage.includes('battery') || lowerMessage.includes('chemical')) {
+                    return "Hazardous waste requires special handling. This includes batteries, electronics, chemicals, and medical waste. Never put these in regular trash. Many communities have special collection days or drop-off locations for hazardous materials.";
+                } else if (lowerMessage.includes('thank')) {
+                    return "You're welcome! Let me know if you have any other questions about waste classification or recycling.";
+                } else if (lowerMessage.includes('help')) {
+                    return "I can help you with: \n- Waste classification \n- Recycling information \n- Proper disposal methods \n- Composting tips \n\nTry asking about a specific waste type or upload an image for classification.";
+                } else {
+                    const randomResponses = [
+                        "I'm not sure I understand. Could you rephrase your question?",
+                        "That's an interesting question about waste! Could you provide more details?",
+                        "I specialize in waste classification. Try asking about specific waste types or upload an image for analysis.",
+                        "For more accurate information, you might want to upload an image of the waste you're asking about."
+                    ];
+                    return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+                }
             }
         });
     </script>
