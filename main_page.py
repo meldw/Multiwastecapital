@@ -9,7 +9,7 @@ from modul.model_vlm import classify_image_from_file
 from modul.model_llm import get_bot_reply
 
 st.set_page_config(page_title="EcoSort UI", layout="wide")
-st.title("🌱 EcoSort Interface")
+st.title("Sampah Bercuan")
 
 if 'page' not in st.session_state:
     st.session_state.page = 'home'
