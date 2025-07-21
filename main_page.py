@@ -9,7 +9,7 @@ from modul.model_vlm import classify_image_from_file
 from modul.model_llm import get_bot_reply
 
 st.set_page_config(page_title="EcoSort UI", layout="wide")
-st.title("Sampah Bercuan")
+st.title("Trash2capital")
 
 if 'page' not in st.session_state:
     st.session_state.page = 'home'
@@ -22,7 +22,7 @@ def render_page(page):
             html_code = f.read()
         components.html(html_code, height=1300, scrolling=True)
         # Bagian Upload dan VLM
-        st.subheader("🖼️ Klasifikasi Sampah (VLM)")
+        st.subheader("🖼️ waste Classifications (VLM)")
         uploaded_file = st.file_uploader("Upload gambar sampah", type=["jpg", "jpeg", "png"])
         
         if uploaded_file:
@@ -31,7 +31,7 @@ def render_page(page):
                 f.write(uploaded_file.getbuffer())
 
             # Tampilkan preview gambar
-            st.image("temp.jpg", caption="Gambar yang di-upload", use_container_width=True)
+            st.image("temp.jpg", caption="Upload your waste item", use_container_width=True)
 
             # Klasifikasi dengan model VLM
             hasil_klasifikasi = classify_image_from_file("temp.jpg")
