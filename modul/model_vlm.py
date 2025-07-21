@@ -29,6 +29,8 @@ def classify_image_from_file(image_path, token=hf_token):
 #buat modif retrain tunning model
 #buat folder data_trainnya dulu 
 #dataset buat trainny ada di drive https://drive.google.com/drive/folders/1USqG9V60kiHIkNOLBV-Jrr1nXtUzbzGK?usp=drive_link
+
+
 import os
 import torch
 from torchvision import datasets, transforms
@@ -38,23 +40,23 @@ from datasets import load_dataset, DatasetDict
 from PIL import Image
 from huggingface_hub import login
 
-# ✅ Login Hugging Face
+# Login Hugging Face
 hf_token = os.getenv("HF_TOKEN")
 login(token=hf_token)
 
-# ✅ Konfigurasi dasar
+# Konfigurasi dasar
 model_checkpoint = "yangy50/garbage-classification"
 data_dir = "data_train/garbage_classification"
 output_dir = "./garbage_model_finetuned"
 
-# ✅ Load processor dan model
+# Load processor dan model
 processor = AutoImageProcessor.from_pretrained(model_checkpoint)
 model = AutoModelForImageClassification.from_pretrained(
     model_checkpoint,
     ignore_mismatched_sizes=True  # untuk penyesuaian jumlah kelas baru
 )
 
-# ✅ Cek jumlah label
+# Cek jumlah label
 labels = sorted(os.listdir(data_dir))
 label2id = {label: idx for idx, label in enumerate(labels)}
 id2label = {idx: label for label, idx in label2id.items()}
@@ -63,26 +65,26 @@ id2label = {idx: label for label, idx in label2id.items()}
 model.config.label2id = label2id
 model.config.id2label = id2label
 
-# ✅ Preprocessing transform
+# Preprocessing transform
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
     transforms.ToTensor(),
     transforms.Normalize(mean=processor.image_mean, std=processor.image_std),
 ])
 
-# ✅ Load dataset dari ImageFolder
+# Load dataset dari ImageFolder
 dataset = datasets.ImageFolder(root=data_dir, transform=transform)
 
-# ✅ Split train/val
+# Split train/val
 torch.manual_seed(42)
 train_size = int(0.9 * len(dataset))
 val_size = len(dataset) - train_size
 train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size])
 
-# ✅ Data Collator
+# Data Collator
 data_collator = DefaultDataCollator()
 
-# ✅ Training arguments
+# Training arguments
 training_args = TrainingArguments(
     output_dir=output_dir,
     per_device_train_batch_size=8,
@@ -97,7 +99,7 @@ training_args = TrainingArguments(
     hub_token=hf_token
 )
 
-# ✅ Trainer
+# Trainer
 trainer = Trainer(
     model=model,
     args=training_args,
@@ -107,9 +109,9 @@ trainer = Trainer(
     data_collator=data_collator,
 )
 
-# ✅ Fine-tune
+# Fine-tune
 trainer.train()
 
-# ✅ Push ke HuggingFace Hub
+# Push ke HuggingFace Hub
 trainer.push_to_hub()
 '''
