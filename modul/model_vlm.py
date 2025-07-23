@@ -1,4 +1,4 @@
-'''
+
 import os
 from transformers import pipeline, AutoImageProcessor, AutoModelForImageClassification
 from PIL import Image
@@ -8,13 +8,13 @@ hf_token = os.getenv("HF_TOKEN")
 
 
 def classify_image_from_url(image_url, token=hf_token):
-    pipe = pipeline("image-classification", model="yangy50/garbage-classification", token=token)
+    pipe = pipeline("image-classification", model="youssefabdelmottaleb/Garbage-Classification-SWIN-Transformer", token=token)
     result = pipe(image_url)
     return result
 
 def classify_image_from_file(image_path, token=hf_token):
-    processor = AutoImageProcessor.from_pretrained("yangy50/garbage-classification", token=token)
-    model = AutoModelForImageClassification.from_pretrained("yangy50/garbage-classification", token=token)
+    processor = AutoImageProcessor.from_pretrained("youssefabdelmottaleb/Garbage-Classification-SWIN-Transformer", token=token)
+    model = AutoModelForImageClassification.from_pretrained("youssefabdelmottaleb/Garbage-Classification-SWIN-Transformer", token=token)
 
     image = Image.open(image_path).convert("RGB")
     inputs = processor(images=image, return_tensors="pt")
@@ -24,7 +24,7 @@ def classify_image_from_file(image_path, token=hf_token):
     label = model.config.id2label[predicted_class_idx]
     return label
 
-'''
+
 '''
 import os
 import gdown
@@ -165,7 +165,7 @@ async def classify_image(file: UploadFile = File(...)):
 
 model = load_model()
 '''
-
+'''
 import os
 import torch
 import torch.nn as nn
@@ -254,5 +254,5 @@ def classify_image_from_file(image_path, token=None):
 
     predicted_label = labels[predicted_class_idx]
     return predicted_label
-
+'''
 
