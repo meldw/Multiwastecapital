@@ -120,7 +120,7 @@ DRIVE_FILE_ID = "1n8f9yuMOBleuoAGhIgpta5MsQSynxzrt"
 
 def download_model_if_needed():
     if not os.path.exists(MODEL_PATH):
-        url = f"https://drive.google.com/uc?id={DRIVE_FILE_ID}"
+        url = "https://drive.google.com/uc?id=1n8f9yuMOBleuoAGhIgpta5MsQSynxzrt"
         gdown.download(url, MODEL_PATH, quiet=False)
 
 def load_model():
