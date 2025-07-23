@@ -21,6 +21,7 @@ def render_page(page):
         with open("public/cwastemel_ui.html", "r", encoding="utf-8") as f:
             html_code = f.read()
         components.html(html_code, height=1300, scrolling=True)
+        '''
         # Bagian Upload dan VLM
         st.subheader("🖼️ waste Classifications (VLM)")
         uploaded_file = st.file_uploader("Upload gambar sampah", type=["jpg", "jpeg", "png"])
@@ -36,6 +37,7 @@ def render_page(page):
             # Klasifikasi dengan model VLM
             hasil_klasifikasi = classify_image_from_file("temp.jpg")
             st.success(f"♻️ Hasil klasifikasi: **{hasil_klasifikasi}**")
+            '''
 
     elif page == 'coins':
         # st.write("Welcome to the Coins Page!")
