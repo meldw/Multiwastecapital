@@ -1,3 +1,4 @@
+'''
 import os
 from transformers import pipeline, AutoImageProcessor, AutoModelForImageClassification
 from PIL import Image
@@ -23,4 +24,35 @@ def classify_image_from_file(image_path, token=hf_token):
     label = model.config.id2label[predicted_class_idx]
     return label
 
+'''
+import os
+import gdown
+import pickle
+
+MODEL_PATH = "modul/modelllm.pkl"
+DRIVE_FILE_ID = "1n8f9yuMOBleuoAGhIgpta5MsQSynxzrt"  # Ganti dengan ID-mu
+
+# Download dari Google Drive kalau belum ada
+def download_model_if_needed():
+    if not os.path.exists(MODEL_PATH):
+        print("Downloading model from Google Drive...")
+        url = "https://drive.google.com/file/d/1n8f9yuMOBleuoAGhIgpta5MsQSynxzrt/view?usp=sharing"
+        gdown.download(url, MODEL_PATH, quiet=False)
+
+# Load model
+def load_model():
+    download_model_if_needed()
+    with open(MODEL_PATH, "rb") as f:
+        model = pickle.load(f)
+    return model
+
+# Load once and reuse
+model = load_model()
+
+# Prediction function
+def classify_image_from_file(image_file):
+    # Load image, process, then:
+    # e.g., result = model.predict(image_data)
+    # (contoh dummy):
+    return model.predict([image_file])
 
