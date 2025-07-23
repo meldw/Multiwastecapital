@@ -12,5 +12,8 @@ scikit-learn
 evaluate
 accelerate
 gdown
+fastapi
+uvicorn
+torchvision
 
 
