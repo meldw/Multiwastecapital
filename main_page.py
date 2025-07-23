@@ -71,5 +71,5 @@ elif page_selection == "History":
     st.session_state.page = 'history'
 
 # Render content based on the selected page
-render_page(st.session_state.page)
+#render_page(st.session_state.page)
 # render_page(st.session_state.page)
