@@ -1,6 +1,6 @@
 transformers
 torch
-Pillow
+pillow
 requests
 python-dotenv
 streamlit
@@ -13,6 +13,7 @@ evaluate
 accelerate
 gdown
 fastapi
-
+torchvision
+requests
 
 
