@@ -15,5 +15,7 @@ gdown
 fastapi
 torchvision
 requests
+sentencepiece
+einops
 
 
