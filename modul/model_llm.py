@@ -1,11 +1,9 @@
 from transformers import pipeline
 
 # Inisialisasi pipeline dengan model dari Hugging Face
-# Inisialisasi pipeline sekali saja di global scope supaya tidak reload berulang-ulang
 pipe = pipeline(
     "text-generation",
     model="satvikag/chatbot",
-    model="Qwen/Qwen1.5-1.8B-Chat",
     max_new_tokens=100,
     do_sample=True,
     temperature=0.7,
@@ -15,22 +13,7 @@ def get_bot_reply(user_input):
     prompt = user_input
     result = pipe(prompt)
     reply = result[0]["generated_text"].replace(prompt, "").strip()
-    messages = [{"role": "user", "content": user_input}]
-    result = pipe(messages)
-    full_text = result[0]["generated_text"]
-
-    # Bersihkan output supaya hanya balasan chatbot yang tersisa
-    reply = full_text
-    for msg in messages:
-        reply = reply.replace(msg["content"], "").strip()
     return reply
-
-if __name__ == "__main__":
-    # Contoh penggunaan
-    user_text = "Who are you?"
-    print("User:", user_text)
-    print("Bot:", get_bot_reply(user_text))
-
 '''
 # Inisialisasi pipeline dengan model dari Hugging Face
 pipe = pipeline(
