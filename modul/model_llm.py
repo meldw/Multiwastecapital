@@ -1,107 +1,65 @@
 from transformers import pipeline
 
-# Inisialisasi pipeline dengan model dari Hugging Face
+# Inisialisasi pipeline sekali saja di global scope supaya tidak reload berulang-ulang
 pipe = pipeline(
     "text-generation",
-    model="satvikag/chatbot",
+    model="Qwen/Qwen1.5-1.8B-Chat",
     max_new_tokens=100,
     do_sample=True,
     temperature=0.7,
 )
 
 def get_bot_reply(user_input):
-    prompt = user_input
-    result = pipe(prompt)
-    reply = result[0]["generated_text"].replace(prompt, "").strip()
+    messages = [{"role": "user", "content": user_input}]
+    result = pipe(messages)
+    full_text = result[0]["generated_text"]
+
+    # Bersihkan output supaya hanya balasan chatbot yang tersisa
+    reply = full_text
+    for msg in messages:
+        reply = reply.replace(msg["content"], "").strip()
     return reply
 
+if __name__ == "__main__":
+    # Contoh penggunaan
+    user_text = "Who are you?"
+    print("User:", user_text)
+    print("Bot:", get_bot_reply(user_text))
+
 '''
-import os
+# app.py
 import torch
-import torch.nn as nn
-import gdown
-from PIL import Image
-from io import BytesIO
-import requests
-import torchvision.transforms as transforms
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
-# ======= MODEL DEFINISI =======
-class MyModel(nn.Module):
-    def __init__(self):
-        super(MyModel, self).__init__()
-        # contoh layer, sesuaikan dengan modelmu
-        self.fc1 = nn.Linear(100, 50)
-        self.relu = nn.ReLU()
-        self.fc2 = nn.Linear(50, 10)
+MODEL_ID = "meta-llama/Meta-Llama-3-8B"
 
-    def forward(self, x):
-        x = self.relu(self.fc1(x))
-        return self.fc2(x)
+# Load tokenizer dan model
+tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_ID,
+    torch_dtype=torch.float16,
+    device_map="auto"
+)
 
-# ======= MODEL PATH & DOWNLOAD =======
-MODEL_PATH = "modelllm.pkl"
-DRIVE_FILE_ID = "1n8f9yuMOBleuoAGhIgpta5MsQSynxzrt"  # ganti sesuai ID kamu
+# Siapkan pipeline untuk text generation
+chat = pipeline("text-generation", model=model, tokenizer=tokenizer)
 
-def download_model_if_needed():
-    if not os.path.exists(MODEL_PATH):
-        url = "https://drive.google.com/uc?id=1n8f9yuMOBleuoAGhIgpta5MsQSynxzrt"
-        gdown.download(url, MODEL_PATH, quiet=False)
+# Fungsi chat loop
+def chat_with_bot():
+    print("🤖 LLaMA 3 Chatbot (meta-llama/Meta-Llama-3-8B)")
+    print("Ketik 'exit' untuk keluar.\n")
+    while True:
+        user_input = input("🧑 Kamu: ")
+        if user_input.lower() in ["exit", "quit"]:
+            print("👋 Bye!")
+            break
 
-# Load model sekali saat modul di-import
-def load_model():
-    download_model_if_needed()
-    model = MyModel()
-    model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
-    model.eval()
-    return model
+        # Format prompt gaya LLaMA 3 (simple version)
+        prompt = f"<|user|>\n{user_input}\n<|assistant|>\n"
+        response = chat(prompt, max_new_tokens=256, do_sample=True, temperature=0.7)
+        bot_output = response[0]['generated_text'].split("<|assistant|>")[-1].strip()
+        print(f"🤖 Bot: {bot_output}\n")
 
-model = load_model()
-
-# ======= TRANSFORM IMAGE =======
-transform = transforms.Compose([
-    transforms.Resize((10, 10)),  # sesuaikan ukuran input model kamu
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5], std=[0.5])
-])
-
-# ======= FUNSI UTAMA =======
-
-def classify_image_from_url(image_url, token=None):
-    """
-    Download image dari URL, lalu klasifikasi dengan model PyTorch.
-    Token diabaikan supaya signature tetap sama.
-    """
-    response = requests.get(image_url)
-    image = Image.open(BytesIO(response.content)).convert("RGB")
-    input_tensor = transform(image).unsqueeze(0)  # batch size 1
-
-    with torch.no_grad():
-        output = model(input_tensor)
-        predicted_class_idx = output.argmax(dim=1).item()
-
-    # Contoh label, sesuaikan dengan label asli modelmu
-    labels = ["class_0", "class_1", "class_2", "class_3", "class_4",
-              "class_5", "class_6", "class_7", "class_8", "class_9"]
-
-    predicted_label = labels[predicted_class_idx]
-    return predicted_label
-
-def classify_image_from_file(image_path, token=None):
-    """
-    Baca gambar dari file lokal, klasifikasi dengan model PyTorch.
-    Token diabaikan supaya signature tetap sama.
-    """
-    image = Image.open(image_path).convert("RGB")
-    input_tensor = transform(image).unsqueeze(0)  # batch size 1
-
-    with torch.no_grad():
-        output = model(input_tensor)
-        predicted_class_idx = output.argmax(dim=1).item()
-
-    # Contoh label, sesuaikan dengan label asli modelmu
-    labels = ["class_0", "class_1", "class_2", "class_3", "class_4",
-              "class_5", "class_6", "class_7", "class_8", "class_9"]
-
-    predicted_label = labels[predicted_class_idx]
-    return predicted_label
+if __name__ == "__main__":
+    chat_with_bot()
 '''
