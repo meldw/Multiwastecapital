@@ -75,12 +75,14 @@ model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen1.5-1.8B-Chat", trust_rem
 # Template sistem & beberapa pertanyaan sebelumnya
 base_messages = [
     {"role": "system", "content": "You are a helpful assistant specialized in waste management, garbage classification, and sustainable investment."},
+    
     {"role": "user", "content": "Apa yang dimaksud dengan klasifikasi sampah dan mengapa penting dalam pengelolaan multiwaste?"},
+    {"role": "assistant", "content": "Klasifikasi sampah adalah proses pemisahan sampah berdasarkan jenisnya seperti organik, anorganik, B3, dan daur ulang. Ini penting agar pengelolaan lebih efisien dan ramah lingkungan."},
+
     {"role": "user", "content": "Berikan contoh bagaimana AI bisa membantu klasifikasi sampah rumah tangga."},
-    {"role": "user", "content": "Apa tantangan dalam menerapkan sistem multiwaste di negara berkembang?"},
-    {"role": "user", "content": "Jenis investasi apa yang dibutuhkan untuk mendukung inovasi pengelolaan sampah berbasis teknologi?"},
-    {"role": "user", "content": "Bagaimana cara mengukur dampak lingkungan dari sistem klasifikasi sampah otomatis?"},
-    {"role": "user", "content": "Saya sedang membuat aplikasi edukasi pengelolaan sampah dengan fitur klasifikasi gambar, saran dong gimana cara membangun model AI-nya."}
+    {"role": "assistant", "content": "AI dapat digunakan untuk mengenali jenis sampah dari gambar menggunakan model vision, lalu otomatis mengarahkan sampah ke kategori yang sesuai."},
+
+    {"role": "user", "content": "Apa tantangan dalam menerapkan sistem multiwaste di negara."}
 ]
 
 # Fungsi yang bisa dipanggil sebagai endpoint
