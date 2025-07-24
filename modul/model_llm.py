@@ -81,8 +81,7 @@ base_messages = [
 
     {"role": "user", "content": "Berikan contoh bagaimana AI bisa membantu klasifikasi sampah rumah tangga."},
     {"role": "assistant", "content": "AI dapat digunakan untuk mengenali jenis sampah dari gambar menggunakan model vision, lalu otomatis mengarahkan sampah ke kategori yang sesuai."},
-
-    {"role": "user", "content": "Apa tantangan dalam menerapkan sistem multiwaste di negara."}
+    
 ]
 
 # Fungsi yang bisa dipanggil sebagai endpoint
