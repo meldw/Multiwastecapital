@@ -1,3 +1,4 @@
+'''
 from transformers import pipeline
 
 # Inisialisasi pipeline sekali saja di global scope supaya tidak reload berulang-ulang
@@ -26,6 +27,7 @@ if __name__ == "__main__":
     print("User:", user_text)
     print("Bot:", get_bot_reply(user_text))
 
+'''
 '''
 # app.py
 import torch
@@ -63,3 +65,61 @@ def chat_with_bot():
 if __name__ == "__main__":
     chat_with_bot()
 '''
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch
+
+# Load model dan tokenizer sekali saja
+tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen1.5-1.8B-Chat", trust_remote_code=True)
+model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen1.5-1.8B-Chat", trust_remote_code=True, device_map="auto")
+
+# Template sistem & beberapa pertanyaan sebelumnya
+base_messages = [
+    {"role": "system", "content": "You are a helpful assistant specialized in waste management, garbage classification, and sustainable investment."},
+    {"role": "user", "content": "Apa yang dimaksud dengan klasifikasi sampah dan mengapa penting dalam pengelolaan multiwaste?"},
+    {"role": "user", "content": "Berikan contoh bagaimana AI bisa membantu klasifikasi sampah rumah tangga."},
+    {"role": "user", "content": "Apa tantangan dalam menerapkan sistem multiwaste di negara berkembang?"},
+    {"role": "user", "content": "Jenis investasi apa yang dibutuhkan untuk mendukung inovasi pengelolaan sampah berbasis teknologi?"},
+    {"role": "user", "content": "Bagaimana cara mengukur dampak lingkungan dari sistem klasifikasi sampah otomatis?"},
+    {"role": "user", "content": "Saya sedang membuat aplikasi edukasi pengelolaan sampah dengan fitur klasifikasi gambar, saran dong gimana cara membangun model AI-nya."}
+]
+
+# Fungsi yang bisa dipanggil sebagai endpoint
+def get_bot_reply(user_input):
+    # Tambahkan pertanyaan user terbaru
+    messages = base_messages + [{"role": "user", "content": user_input}]
+    
+    # Tokenisasi dan format
+    inputs = tokenizer.apply_chat_template(
+        messages,
+        add_generation_prompt=True,
+        tokenize=True,
+        return_tensors="pt"
+    ).to(model.device)
+
+    # Generate respon
+    outputs = model.generate(
+        **inputs,
+        max_new_tokens=300,
+        do_sample=True,
+        temperature=0.7,
+        top_p=0.95
+    )
+
+    # Ambil hanya output dari jawaban model
+    response = tokenizer.decode(
+        outputs[0][inputs["input_ids"].shape[-1]:],
+        skip_special_tokens=True
+    )
+    return response
+
+'''
+# --- Testing lokal ---
+if name == "main":
+    print("Qwen Assistant (topik: sampah, AI, investasi)\nKetik 'exit' untuk keluar.\n")
+    while True:
+        user_input = input("🧑 Kamu: ")
+        if user_input.strip().lower() in ["exit", "quit"]:
+            break
+        reply = get_bot_reply(user_input)
+        print("🤖 Bot:", reply)
+        '''
