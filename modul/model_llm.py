@@ -79,6 +79,7 @@ def chat_with_bot():
 if __name__ == "__main__":
     chat_with_bot()
 '''
+'''
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 
@@ -127,7 +128,7 @@ def get_bot_reply(user_input):
     )
     return response
 
-'''
+
 # --- Testing lokal ---
 if name == "main":
     print("Qwen Assistant (topik: sampah, AI, investasi)\nKetik 'exit' untuk keluar.\n")
